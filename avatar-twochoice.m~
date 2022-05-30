@@ -1,0 +1,30 @@
+clear all
+
+path_directory = '/Users/user/Science/2020 ABATAR-KKJ-rawfiles/analysis-data/raw/lickdata';
+files=dir([path_directory '/*.csv']); 
+timeEnd= 30*60*30;
+TotalLick = {};
+for f=1:length(files)
+    filename=[path_directory '/' files(f).name];
+    lick = readtable(filename);
+    lick = table2array(lick);
+    if(lenght(lick) > timeEnd)
+        lick = lick(1:timeEnd);
+    end
+    A_time = find(lick==1);
+    B_time = find(lick==2);
+    
+    lickArray = zeros(timeEnd,2);
+    lickArray(A_time,1) = 1;
+    lickArray(B_time,2) = 1;
+    cumLick = cumsum(lickArray,1);
+    timeX = [1:1:timeEnd];
+    cumLick = cat(2,timeX', cumLick);
+    
+    
+    TotalLick{:,1} = files(f).name(1:end-4);
+    TotalLick{:,2} = length(A_time);
+    TotalLick{:,3} = length(A_time);
+    TotalLick{:,4} = cumLick;
+
+end
